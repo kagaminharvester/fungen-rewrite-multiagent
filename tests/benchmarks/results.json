@@ -1,0 +1,55 @@
+{
+  "benchmark_date": "2025-10-24 20:38:10",
+  "results": [
+    {
+      "tracker_name": "ByteTrack (baseline)",
+      "fps": 843.54,
+      "latency_ms": 1.19,
+      "mota": 1.0,
+      "confirmed_tracks": 5,
+      "total_frames": 300,
+      "memory_mb": 50.0
+    },
+    {
+      "tracker_name": "ImprovedTracker (Kalman only)",
+      "fps": 575.69,
+      "latency_ms": 1.74,
+      "mota": 0.0,
+      "confirmed_tracks": 0,
+      "total_frames": 300,
+      "memory_mb": 50.0
+    },
+    {
+      "tracker_name": "ImprovedTracker (full hybrid)",
+      "fps": 550.32,
+      "latency_ms": 1.82,
+      "mota": 0.0,
+      "confirmed_tracks": 0,
+      "total_frames": 300,
+      "memory_mb": 50.0
+    },
+    {
+      "tracker_name": "ByteTrack (occlusions)",
+      "fps": 1219.09,
+      "latency_ms": 0.82,
+      "mota": 1.0,
+      "confirmed_tracks": 5,
+      "total_frames": 300,
+      "memory_mb": 50.0
+    },
+    {
+      "tracker_name": "ImprovedTracker (occlusions)",
+      "fps": 663.06,
+      "latency_ms": 1.51,
+      "mota": 0.0,
+      "confirmed_tracks": 0,
+      "total_frames": 300,
+      "memory_mb": 50.0
+    }
+  ],
+  "summary": {
+    "fastest_tracker": "ByteTrack (occlusions)",
+    "lowest_latency": "ByteTrack (occlusions)",
+    "best_accuracy": "ByteTrack (baseline)"
+  }
+}

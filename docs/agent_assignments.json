@@ -1,0 +1,988 @@
+{
+  "project_metadata": {
+    "project_name": "FunGen Rewrite",
+    "version": "1.0",
+    "created_date": "2025-10-24",
+    "architect": "project-architect",
+    "total_agents": 15,
+    "estimated_duration_minutes": 30,
+    "target_platform": "Raspberry Pi (dev) + RTX 3090 (prod)"
+  },
+  "agent_teams": {
+    "planning": {
+      "phase": "Minutes 0-5",
+      "agents": ["project-architect", "requirements-analyst"]
+    },
+    "core_development": {
+      "phase": "Minutes 5-25",
+      "parallel": true,
+      "agents": [
+        "video-specialist",
+        "ml-specialist",
+        "tracker-dev-1",
+        "tracker-dev-2",
+        "ui-architect",
+        "ui-enhancer",
+        "cross-platform-dev"
+      ]
+    },
+    "quality_assurance": {
+      "phase": "Minutes 15-30",
+      "parallel": true,
+      "agents": [
+        "test-engineer-1",
+        "test-engineer-2",
+        "integration-master",
+        "code-quality"
+      ]
+    },
+    "debug_loop": {
+      "phase": "Minutes 15-30",
+      "on_demand": true,
+      "agents": ["gpu-debugger", "python-debugger"]
+    }
+  },
+  "agent_assignments": {
+    "project-architect": {
+      "status": "in_progress",
+      "phase": "Planning",
+      "duration": "0-5 minutes",
+      "priority": "critical",
+      "dependencies": [],
+      "deliverables": [
+        "/home/pi/elo_elo_320/docs/architecture.md",
+        "/home/pi/elo_elo_320/docs/agent_assignments.json"
+      ],
+      "tasks": [
+        {
+          "id": "PA-1",
+          "description": "Read CLAUDE.md and understand mission",
+          "status": "completed",
+          "estimated_minutes": 1
+        },
+        {
+          "id": "PA-2",
+          "description": "Analyze FunGen repository structure via GitHub MCP",
+          "status": "completed",
+          "estimated_minutes": 2
+        },
+        {
+          "id": "PA-3",
+          "description": "Research YOLO optimization, ByteTrack vs BoT-SORT, TensorRT best practices",
+          "status": "completed",
+          "estimated_minutes": 2
+        },
+        {
+          "id": "PA-4",
+          "description": "Design architecture.md with module specifications",
+          "status": "completed",
+          "estimated_minutes": 3
+        },
+        {
+          "id": "PA-5",
+          "description": "Create agent_assignments.json with detailed work distribution",
+          "status": "in_progress",
+          "estimated_minutes": 2
+        }
+      ],
+      "skills_required": ["system_design", "performance_optimization", "research"],
+      "output_format": "markdown + json"
+    },
+    "requirements-analyst": {
+      "status": "pending",
+      "phase": "Planning",
+      "duration": "0-5 minutes",
+      "priority": "critical",
+      "dependencies": ["project-architect"],
+      "deliverables": [
+        "/home/pi/elo_elo_320/docs/requirements.md",
+        "/home/pi/elo_elo_320/docs/feature_priority.json"
+      ],
+      "tasks": [
+        {
+          "id": "RA-1",
+          "description": "Extract all features from FunGen README.md",
+          "estimated_minutes": 2,
+          "details": "Parse filter plugins, tracking modes, VR formats, CLI args"
+        },
+        {
+          "id": "RA-2",
+          "description": "Prioritize features (must-have, nice-to-have, defer)",
+          "estimated_minutes": 2,
+          "details": "Must-have: funscript gen, VR support, ByteTrack, GUI, CLI"
+        },
+        {
+          "id": "RA-3",
+          "description": "Create requirements.md with acceptance criteria",
+          "estimated_minutes": 1,
+          "details": "Include performance targets, test coverage, compatibility"
+        }
+      ],
+      "skills_required": ["requirements_engineering", "prioritization"],
+      "output_format": "markdown + json"
+    },
+    "video-specialist": {
+      "status": "pending",
+      "phase": "Core Development",
+      "duration": "5-15 minutes",
+      "priority": "critical",
+      "dependencies": ["project-architect"],
+      "deliverables": [
+        "/home/pi/elo_elo_320/core/video_pipeline.py",
+        "/home/pi/elo_elo_320/core/batch_processor.py",
+        "/home/pi/elo_elo_320/tests/unit/test_video_pipeline.py"
+      ],
+      "tasks": [
+        {
+          "id": "VS-1",
+          "description": "Implement VideoPipeline class with FFmpeg integration",
+          "estimated_minutes": 4,
+          "details": "Support hw_accel (NVDEC), get_metadata(), stream_frames(), seek()"
+        },
+        {
+          "id": "VS-2",
+          "description": "Add PyNvVideoCodec 2.0 support for RTX 3090",
+          "estimated_minutes": 3,
+          "details": "Threaded decoding, multi-GPU, frame sampling"
+        },
+        {
+          "id": "VS-3",
+          "description": "Implement circular frame buffer (max 60 frames)",
+          "estimated_minutes": 2,
+          "details": "Memory-efficient streaming, prevent OOM"
+        },
+        {
+          "id": "VS-4",
+          "description": "Add VR format detection (SBS Fisheye/Equirectangular)",
+          "estimated_minutes": 2,
+          "details": "Parse filename patterns (_FISHEYE190, _MKX200, _LR_180)"
+        },
+        {
+          "id": "VS-5",
+          "description": "Create BatchProcessor for multi-video queues",
+          "estimated_minutes": 3,
+          "details": "Queue management, progress callbacks, crash recovery"
+        },
+        {
+          "id": "VS-6",
+          "description": "Write unit tests for VideoPipeline",
+          "estimated_minutes": 2,
+          "details": "Test decode, seek, metadata, VR detection"
+        }
+      ],
+      "performance_targets": {
+        "decode_fps_1080p": 200,
+        "decode_fps_8k": 60,
+        "memory_usage_mb": 500
+      },
+      "skills_required": ["ffmpeg", "video_processing", "python"],
+      "code_standards": {
+        "type_hints": true,
+        "docstrings": "google",
+        "formatter": "black --line-length=100"
+      }
+    },
+    "ml-specialist": {
+      "status": "pending",
+      "phase": "Core Development",
+      "duration": "5-15 minutes",
+      "priority": "critical",
+      "dependencies": ["project-architect"],
+      "deliverables": [
+        "/home/pi/elo_elo_320/core/model_manager.py",
+        "/home/pi/elo_elo_320/core/config.py",
+        "/home/pi/elo_elo_320/tests/unit/test_model_manager.py"
+      ],
+      "tasks": [
+        {
+          "id": "ML-1",
+          "description": "Implement ModelManager class with auto-detection",
+          "estimated_minutes": 3,
+          "details": "Detect .engine > .onnx > .pt, lazy loading, warmup"
+        },
+        {
+          "id": "ML-2",
+          "description": "Add TensorRT FP16 optimization",
+          "estimated_minutes": 3,
+          "details": "Export ONNX → TensorRT engine, half=True"
+        },
+        {
+          "id": "ML-3",
+          "description": "Implement batch inference (predict_batch)",
+          "estimated_minutes": 2,
+          "details": "Dynamic batching, optimal batch size calculation"
+        },
+        {
+          "id": "ML-4",
+          "description": "Add VRAM monitoring (get_vram_usage)",
+          "estimated_minutes": 2,
+          "details": "torch.cuda.memory_allocated(), track peak usage"
+        },
+        {
+          "id": "ML-5",
+          "description": "Implement multi-GPU support with MPS",
+          "estimated_minutes": 2,
+          "details": "Device selection, model replication across GPUs"
+        },
+        {
+          "id": "ML-6",
+          "description": "Create Config class with profile support",
+          "estimated_minutes": 2,
+          "details": "dev_pi, prod_rtx3090, debug profiles"
+        },
+        {
+          "id": "ML-7",
+          "description": "Write unit tests with mock models",
+          "estimated_minutes": 2,
+          "details": "Test loading, inference, VRAM tracking"
+        }
+      ],
+      "performance_targets": {
+        "inference_fps_1080p": 100,
+        "vram_usage_gb": 20,
+        "model_load_time_seconds": 5
+      },
+      "skills_required": ["pytorch", "tensorrt", "yolo", "cuda"],
+      "code_standards": {
+        "type_hints": true,
+        "docstrings": "google",
+        "formatter": "black --line-length=100"
+      }
+    },
+    "tracker-dev-1": {
+      "status": "pending",
+      "phase": "Core Development",
+      "duration": "10-20 minutes",
+      "priority": "high",
+      "dependencies": ["project-architect", "ml-specialist"],
+      "deliverables": [
+        "/home/pi/elo_elo_320/trackers/base_tracker.py",
+        "/home/pi/elo_elo_320/trackers/bytetrack.py",
+        "/home/pi/elo_elo_320/tests/unit/test_bytetrack.py"
+      ],
+      "tasks": [
+        {
+          "id": "TD1-1",
+          "description": "Create BaseTracker abstract class",
+          "estimated_minutes": 2,
+          "details": "Define interface: initialize(), update(), get_funscript_data()"
+        },
+        {
+          "id": "TD1-2",
+          "description": "Implement ByteTrack tracker (fast baseline)",
+          "estimated_minutes": 4,
+          "details": "IoU matching, low/high confidence handling, Kalman filter"
+        },
+        {
+          "id": "TD1-3",
+          "description": "Add detection-to-track association logic",
+          "estimated_minutes": 2,
+          "details": "Hungarian algorithm, IoU threshold tuning"
+        },
+        {
+          "id": "TD1-4",
+          "description": "Implement Kalman filter for motion prediction",
+          "estimated_minutes": 3,
+          "details": "cv2.KalmanFilter, predict/update cycle"
+        },
+        {
+          "id": "TD1-5",
+          "description": "Add funscript conversion logic",
+          "estimated_minutes": 2,
+          "details": "Convert (x,y) positions to 0-100 range, normalize"
+        },
+        {
+          "id": "TD1-6",
+          "description": "Write unit tests for ByteTrack",
+          "estimated_minutes": 2,
+          "details": "Test association, Kalman prediction, edge cases"
+        }
+      ],
+      "performance_targets": {
+        "latency_ms_per_frame": 50,
+        "tracking_accuracy_mota": 70
+      },
+      "skills_required": ["object_tracking", "kalman_filter", "python"],
+      "code_standards": {
+        "type_hints": true,
+        "docstrings": "google",
+        "formatter": "black --line-length=100"
+      }
+    },
+    "tracker-dev-2": {
+      "status": "pending",
+      "phase": "Core Development",
+      "duration": "10-20 minutes",
+      "priority": "high",
+      "dependencies": ["project-architect", "tracker-dev-1"],
+      "deliverables": [
+        "/home/pi/elo_elo_320/trackers/botsort.py",
+        "/home/pi/elo_elo_320/trackers/hybrid_tracker.py",
+        "/home/pi/elo_elo_320/tests/unit/test_hybrid_tracker.py"
+      ],
+      "tasks": [
+        {
+          "id": "TD2-1",
+          "description": "Implement BoT-SORT tracker (accuracy-focused)",
+          "estimated_minutes": 4,
+          "details": "Camera motion compensation, ReID embeddings, extended Kalman"
+        },
+        {
+          "id": "TD2-2",
+          "description": "Add ResNet50 ReID feature extraction",
+          "estimated_minutes": 3,
+          "details": "Extract appearance embeddings, cosine similarity matching"
+        },
+        {
+          "id": "TD2-3",
+          "description": "Implement HybridTracker (production-grade)",
+          "estimated_minutes": 5,
+          "details": "ByteTrack + Optical Flow + Kalman + optional ReID"
+        },
+        {
+          "id": "TD2-4",
+          "description": "Add CUDA optical flow integration",
+          "estimated_minutes": 3,
+          "details": "cv2.cuda.FarnebackOpticalFlow, GPU acceleration"
+        },
+        {
+          "id": "TD2-5",
+          "description": "Implement adaptive algorithm selection",
+          "estimated_minutes": 2,
+          "details": "Switch between ByteTrack/BoT-SORT based on scene complexity"
+        },
+        {
+          "id": "TD2-6",
+          "description": "Write unit tests for HybridTracker",
+          "estimated_minutes": 2,
+          "details": "Test optical flow, Kalman, ReID, algorithm switching"
+        }
+      ],
+      "performance_targets": {
+        "fps_1080p": 80,
+        "tracking_accuracy_mota": 85,
+        "reid_accuracy": 90
+      },
+      "skills_required": ["advanced_tracking", "optical_flow", "deep_learning", "cuda"],
+      "code_standards": {
+        "type_hints": true,
+        "docstrings": "google",
+        "formatter": "black --line-length=100"
+      }
+    },
+    "ui-architect": {
+      "status": "pending",
+      "phase": "Core Development",
+      "duration": "10-20 minutes",
+      "priority": "high",
+      "dependencies": ["project-architect"],
+      "deliverables": [
+        "/home/pi/elo_elo_320/ui/main_window.py",
+        "/home/pi/elo_elo_320/ui/agent_dashboard.py",
+        "/home/pi/elo_elo_320/ui/settings_panel.py",
+        "/home/pi/elo_elo_320/tests/unit/test_ui.py"
+      ],
+      "tasks": [
+        {
+          "id": "UA-1",
+          "description": "Create MainWindow class with tkinter",
+          "estimated_minutes": 3,
+          "details": "Video selection, tracker dropdown, start/stop controls"
+        },
+        {
+          "id": "UA-2",
+          "description": "Implement AgentDashboard widget (unique feature)",
+          "estimated_minutes": 4,
+          "details": "Read progress/*.json, display progress bars, status indicators"
+        },
+        {
+          "id": "UA-3",
+          "description": "Add real-time FPS/VRAM display",
+          "estimated_minutes": 2,
+          "details": "Update every 500ms, matplotlib or tkinter labels"
+        },
+        {
+          "id": "UA-4",
+          "description": "Create SettingsPanel with sv_ttk theme",
+          "estimated_minutes": 3,
+          "details": "Tracker selection, batch size, hw_accel toggle"
+        },
+        {
+          "id": "UA-5",
+          "description": "Implement threading for non-blocking UI",
+          "estimated_minutes": 3,
+          "details": "Run video processing in background thread, update UI via queue"
+        },
+        {
+          "id": "UA-6",
+          "description": "Write UI unit tests (mock processing)",
+          "estimated_minutes": 2,
+          "details": "Test button clicks, progress updates, threading"
+        }
+      ],
+      "performance_targets": {
+        "ui_update_latency_ms": 100,
+        "agent_dashboard_refresh_rate_seconds": 2
+      },
+      "skills_required": ["tkinter", "ui_design", "threading", "python"],
+      "code_standards": {
+        "type_hints": true,
+        "docstrings": "google",
+        "formatter": "black --line-length=100"
+      }
+    },
+    "ui-enhancer": {
+      "status": "pending",
+      "phase": "Core Development",
+      "duration": "15-25 minutes",
+      "priority": "medium",
+      "dependencies": ["ui-architect"],
+      "deliverables": [
+        "/home/pi/elo_elo_320/ui/components/",
+        "/home/pi/elo_elo_320/ui/themes.py",
+        "/home/pi/elo_elo_320/docs/ui_guide.md"
+      ],
+      "tasks": [
+        {
+          "id": "UE-1",
+          "description": "Add tooltips to all buttons/fields",
+          "estimated_minutes": 2,
+          "details": "Use tkinter.Tooltip or custom implementation"
+        },
+        {
+          "id": "UE-2",
+          "description": "Implement keyboard shortcuts",
+          "estimated_minutes": 2,
+          "details": "Ctrl+O (open), Ctrl+S (settings), Space (play/pause)"
+        },
+        {
+          "id": "UE-3",
+          "description": "Create reusable UI components",
+          "estimated_minutes": 3,
+          "details": "ProgressBar, Tooltip, FileDialog, StatusBar"
+        },
+        {
+          "id": "UE-4",
+          "description": "Add light/dark theme support",
+          "estimated_minutes": 3,
+          "details": "sv_ttk.set_theme('light'/'dark'), persist in config"
+        },
+        {
+          "id": "UE-5",
+          "description": "Implement smooth animations",
+          "estimated_minutes": 2,
+          "details": "Progress bar transitions, fade-in/out effects"
+        },
+        {
+          "id": "UE-6",
+          "description": "Create UI documentation (ui_guide.md)",
+          "estimated_minutes": 2,
+          "details": "Screenshots, usage guide, keyboard shortcuts"
+        }
+      ],
+      "skills_required": ["ui_design", "tkinter", "user_experience"],
+      "code_standards": {
+        "type_hints": true,
+        "docstrings": "google",
+        "formatter": "black --line-length=100"
+      }
+    },
+    "cross-platform-dev": {
+      "status": "pending",
+      "phase": "Core Development",
+      "duration": "10-20 minutes",
+      "priority": "high",
+      "dependencies": ["project-architect", "ml-specialist"],
+      "deliverables": [
+        "/home/pi/elo_elo_320/utils/hardware.py",
+        "/home/pi/elo_elo_320/utils/metrics.py",
+        "/home/pi/elo_elo_320/utils/funscript.py",
+        "/home/pi/elo_elo_320/utils/logger.py",
+        "/home/pi/elo_elo_320/tests/unit/test_hardware.py"
+      ],
+      "tasks": [
+        {
+          "id": "CP-1",
+          "description": "Implement hardware detection (detect_hardware)",
+          "estimated_minutes": 3,
+          "details": "Detect CUDA/ROCm/CPU, VRAM, GPU model"
+        },
+        {
+          "id": "CP-2",
+          "description": "Add conditional GPU imports with fallbacks",
+          "estimated_minutes": 2,
+          "details": "torch, tensorrt, cv2.cuda with graceful degradation"
+        },
+        {
+          "id": "CP-3",
+          "description": "Create PerformanceMonitor class",
+          "estimated_minutes": 2,
+          "details": "FPS tracking, VRAM monitoring, CPU usage"
+        },
+        {
+          "id": "CP-4",
+          "description": "Implement funscript I/O utilities",
+          "estimated_minutes": 2,
+          "details": "Read/write .funscript format, validation"
+        },
+        {
+          "id": "CP-5",
+          "description": "Create structured logger",
+          "estimated_minutes": 2,
+          "details": "Log to file + console, debug/info/warning/error levels"
+        },
+        {
+          "id": "CP-6",
+          "description": "Add CPU fallback mode for Pi",
+          "estimated_minutes": 3,
+          "details": "Use ONNX Runtime, reduce batch size, disable optical flow"
+        },
+        {
+          "id": "CP-7",
+          "description": "Write unit tests for hardware detection",
+          "estimated_minutes": 2,
+          "details": "Mock torch/tensorrt, test fallback logic"
+        }
+      ],
+      "performance_targets": {
+        "pi_fps": 5,
+        "rtx3090_fps": 100
+      },
+      "skills_required": ["cross_platform", "hardware_abstraction", "python"],
+      "code_standards": {
+        "type_hints": true,
+        "docstrings": "google",
+        "formatter": "black --line-length=100"
+      }
+    },
+    "test-engineer-1": {
+      "status": "pending",
+      "phase": "Quality Assurance",
+      "duration": "15-30 minutes",
+      "priority": "high",
+      "dependencies": ["video-specialist", "ml-specialist", "tracker-dev-1"],
+      "deliverables": [
+        "/home/pi/elo_elo_320/tests/unit/",
+        "/home/pi/elo_elo_320/tests/conftest.py",
+        "/home/pi/elo_elo_320/docs/test_coverage_report.html"
+      ],
+      "tasks": [
+        {
+          "id": "TE1-1",
+          "description": "Set up pytest infrastructure",
+          "estimated_minutes": 2,
+          "details": "conftest.py, fixtures, mocks"
+        },
+        {
+          "id": "TE1-2",
+          "description": "Write unit tests for core/ modules (80%+ coverage)",
+          "estimated_minutes": 5,
+          "details": "Test video_pipeline, model_manager, batch_processor"
+        },
+        {
+          "id": "TE1-3",
+          "description": "Write unit tests for trackers/ modules",
+          "estimated_minutes": 4,
+          "details": "Test base_tracker, bytetrack, botsort"
+        },
+        {
+          "id": "TE1-4",
+          "description": "Write unit tests for utils/ modules",
+          "estimated_minutes": 3,
+          "details": "Test hardware, metrics, funscript, logger"
+        },
+        {
+          "id": "TE1-5",
+          "description": "Add CPU-only tests for Pi compatibility",
+          "estimated_minutes": 3,
+          "details": "Mock GPU modules, test fallback logic"
+        },
+        {
+          "id": "TE1-6",
+          "description": "Generate coverage report (pytest-cov)",
+          "estimated_minutes": 1,
+          "details": "pytest --cov=core --cov=trackers --cov-report=html"
+        }
+      ],
+      "success_criteria": {
+        "test_coverage_percent": 80,
+        "all_tests_passing": true
+      },
+      "skills_required": ["pytest", "mocking", "test_design"],
+      "code_standards": {
+        "type_hints": true,
+        "docstrings": "google",
+        "formatter": "black --line-length=100"
+      }
+    },
+    "test-engineer-2": {
+      "status": "pending",
+      "phase": "Quality Assurance",
+      "duration": "15-30 minutes",
+      "priority": "high",
+      "dependencies": ["test-engineer-1", "integration-master"],
+      "deliverables": [
+        "/home/pi/elo_elo_320/tests/integration/",
+        "/home/pi/elo_elo_320/tests/benchmarks/",
+        "/home/pi/elo_elo_320/docs/benchmark_results.md"
+      ],
+      "tasks": [
+        {
+          "id": "TE2-1",
+          "description": "Create end-to-end integration tests",
+          "estimated_minutes": 4,
+          "details": "Test video → funscript pipeline, multi-video processing"
+        },
+        {
+          "id": "TE2-2",
+          "description": "Add error handling tests",
+          "estimated_minutes": 3,
+          "details": "Test corrupted video, OOM, missing models"
+        },
+        {
+          "id": "TE2-3",
+          "description": "Create benchmark suite",
+          "estimated_minutes": 4,
+          "details": "FPS, VRAM, CPU usage, accuracy benchmarks"
+        },
+        {
+          "id": "TE2-4",
+          "description": "Run benchmarks on RTX 3090",
+          "estimated_minutes": 3,
+          "details": "1080p, 8K, compare to FunGen baseline"
+        },
+        {
+          "id": "TE2-5",
+          "description": "Run benchmarks on Pi (CPU mode)",
+          "estimated_minutes": 2,
+          "details": "Verify CPU fallback works, measure FPS"
+        },
+        {
+          "id": "TE2-6",
+          "description": "Document results in benchmark_results.md",
+          "estimated_minutes": 2,
+          "details": "Tables, charts, comparison to targets"
+        }
+      ],
+      "success_criteria": {
+        "fps_1080p_rtx3090": 100,
+        "fps_8k_rtx3090": 60,
+        "vram_usage_gb": 20,
+        "pi_functional": true
+      },
+      "skills_required": ["integration_testing", "benchmarking", "performance_analysis"],
+      "code_standards": {
+        "type_hints": true,
+        "docstrings": "google",
+        "formatter": "black --line-length=100"
+      }
+    },
+    "integration-master": {
+      "status": "pending",
+      "phase": "Quality Assurance",
+      "duration": "20-30 minutes",
+      "priority": "critical",
+      "dependencies": [
+        "video-specialist",
+        "ml-specialist",
+        "tracker-dev-1",
+        "tracker-dev-2",
+        "ui-architect",
+        "cross-platform-dev"
+      ],
+      "deliverables": [
+        "/home/pi/elo_elo_320/main.py",
+        "/home/pi/elo_elo_320/docs/integration_report.md"
+      ],
+      "tasks": [
+        {
+          "id": "IM-1",
+          "description": "Review all modules for code duplication",
+          "estimated_minutes": 3,
+          "details": "Use pylint, radon, manual review"
+        },
+        {
+          "id": "IM-2",
+          "description": "Remove duplicates, consolidate utilities",
+          "estimated_minutes": 3,
+          "details": "Move shared code to utils/, refactor imports"
+        },
+        {
+          "id": "IM-3",
+          "description": "Create main.py entry point",
+          "estimated_minutes": 3,
+          "details": "CLI arg parsing, GUI launcher, mode detection"
+        },
+        {
+          "id": "IM-4",
+          "description": "Test integration of all modules",
+          "estimated_minutes": 4,
+          "details": "Run full pipeline, verify interfaces work"
+        },
+        {
+          "id": "IM-5",
+          "description": "Fix integration bugs",
+          "estimated_minutes": 4,
+          "details": "Debug interface mismatches, missing imports"
+        },
+        {
+          "id": "IM-6",
+          "description": "Document integration in integration_report.md",
+          "estimated_minutes": 2,
+          "details": "List changes, removed duplicates, known issues"
+        }
+      ],
+      "success_criteria": {
+        "zero_code_duplication": true,
+        "all_modules_integrated": true,
+        "main_py_functional": true
+      },
+      "skills_required": ["integration", "refactoring", "system_design"],
+      "code_standards": {
+        "type_hints": true,
+        "docstrings": "google",
+        "formatter": "black --line-length=100"
+      }
+    },
+    "code-quality": {
+      "status": "pending",
+      "phase": "Quality Assurance",
+      "duration": "20-30 minutes",
+      "priority": "high",
+      "dependencies": ["integration-master"],
+      "deliverables": [
+        "/home/pi/elo_elo_320/.pre-commit-config.yaml",
+        "/home/pi/elo_elo_320/pyproject.toml",
+        "/home/pi/elo_elo_320/docs/code_quality_report.md"
+      ],
+      "tasks": [
+        {
+          "id": "CQ-1",
+          "description": "Run Black formatter on all .py files",
+          "estimated_minutes": 1,
+          "details": "black . --line-length=100"
+        },
+        {
+          "id": "CQ-2",
+          "description": "Run isort on all imports",
+          "estimated_minutes": 1,
+          "details": "isort . --profile=black"
+        },
+        {
+          "id": "CQ-3",
+          "description": "Run mypy type checking",
+          "estimated_minutes": 3,
+          "details": "mypy . --strict, fix type errors"
+        },
+        {
+          "id": "CQ-4",
+          "description": "Add Google-style docstrings to all functions",
+          "estimated_minutes": 5,
+          "details": "pydocstyle, manual review"
+        },
+        {
+          "id": "CQ-5",
+          "description": "Set up pre-commit hooks",
+          "estimated_minutes": 2,
+          "details": "Black, isort, mypy, pytest in .pre-commit-config.yaml"
+        },
+        {
+          "id": "CQ-6",
+          "description": "Create pyproject.toml with tool configs",
+          "estimated_minutes": 1,
+          "details": "Configure Black, isort, mypy, pytest"
+        },
+        {
+          "id": "CQ-7",
+          "description": "Document code quality metrics",
+          "estimated_minutes": 2,
+          "details": "Type coverage, docstring coverage, complexity scores"
+        }
+      ],
+      "success_criteria": {
+        "zero_mypy_errors": true,
+        "all_functions_documented": true,
+        "code_formatted": true
+      },
+      "skills_required": ["code_quality", "static_analysis", "documentation"],
+      "code_standards": {
+        "type_hints": true,
+        "docstrings": "google",
+        "formatter": "black --line-length=100"
+      }
+    },
+    "gpu-debugger": {
+      "status": "pending",
+      "phase": "Debug Loop (On-Demand)",
+      "duration": "15-30 minutes",
+      "priority": "high",
+      "dependencies": ["test-engineer-1", "test-engineer-2"],
+      "deliverables": [
+        "/home/pi/elo_elo_320/communication/gpu_debug_log.md",
+        "Bug fixes via {agent}_inbox.json"
+      ],
+      "tasks": [
+        {
+          "id": "GD-1",
+          "description": "Monitor test output for CUDA errors",
+          "estimated_minutes": "continuous",
+          "details": "Watch for OOM, invalid device, kernel errors"
+        },
+        {
+          "id": "GD-2",
+          "description": "Analyze CUDA errors, identify root cause",
+          "estimated_minutes": "variable",
+          "details": "Check VRAM usage, batch size, model size"
+        },
+        {
+          "id": "GD-3",
+          "description": "Write fix, send to affected agent via inbox.json",
+          "estimated_minutes": "variable",
+          "details": "Reduce batch size, add VRAM checks, fix kernel calls"
+        },
+        {
+          "id": "GD-4",
+          "description": "Wait for agent response in outbox.json",
+          "estimated_minutes": "variable",
+          "details": "Agent applies fix, runs tests, confirms"
+        },
+        {
+          "id": "GD-5",
+          "description": "Re-test fix, iterate if needed",
+          "estimated_minutes": "variable",
+          "details": "Loop back to GD-3 if still broken"
+        },
+        {
+          "id": "GD-6",
+          "description": "Notify affected agents when fixed",
+          "estimated_minutes": "variable",
+          "details": "Send fix notification to dependent agents"
+        }
+      ],
+      "skills_required": ["cuda", "debugging", "gpu_optimization"],
+      "communication_protocol": {
+        "input": "Test error logs",
+        "output": "communication/{agent}_inbox.json",
+        "response": "communication/{agent}_outbox.json"
+      }
+    },
+    "python-debugger": {
+      "status": "pending",
+      "phase": "Debug Loop (On-Demand)",
+      "duration": "15-30 minutes",
+      "priority": "high",
+      "dependencies": ["test-engineer-1", "test-engineer-2"],
+      "deliverables": [
+        "/home/pi/elo_elo_320/communication/python_debug_log.md",
+        "Bug fixes via {agent}_inbox.json"
+      ],
+      "tasks": [
+        {
+          "id": "PD-1",
+          "description": "Monitor test output for Python errors",
+          "estimated_minutes": "continuous",
+          "details": "Watch for exceptions, logic errors, edge cases"
+        },
+        {
+          "id": "PD-2",
+          "description": "Analyze errors, identify responsible agent",
+          "estimated_minutes": "variable",
+          "details": "Trace stack, check module ownership"
+        },
+        {
+          "id": "PD-3",
+          "description": "Write fix, send to affected agent via inbox.json",
+          "estimated_minutes": "variable",
+          "details": "Fix logic, add edge case handling, update tests"
+        },
+        {
+          "id": "PD-4",
+          "description": "Wait for agent response in outbox.json",
+          "estimated_minutes": "variable",
+          "details": "Agent applies fix, runs tests, confirms"
+        },
+        {
+          "id": "PD-5",
+          "description": "Re-test fix, iterate if needed",
+          "estimated_minutes": "variable",
+          "details": "Loop back to PD-3 if still broken"
+        },
+        {
+          "id": "PD-6",
+          "description": "Notify affected agents when fixed",
+          "estimated_minutes": "variable",
+          "details": "Send fix notification to dependent agents"
+        }
+      ],
+      "skills_required": ["python", "debugging", "problem_solving"],
+      "communication_protocol": {
+        "input": "Test error logs",
+        "output": "communication/{agent}_inbox.json",
+        "response": "communication/{agent}_outbox.json"
+      }
+    }
+  },
+  "communication_protocol": {
+    "progress_tracking": {
+      "format": "progress/{agent}.json",
+      "update_frequency_seconds": 120,
+      "fields": ["agent", "progress", "status", "current_task", "timestamp"]
+    },
+    "bug_fix_workflow": [
+      "Test agent finds bug → reports to debugger",
+      "Debugger analyzes → identifies responsible agent",
+      "Debugger writes fix → sends to communication/{agent}_inbox.json",
+      "Responsible agent reads inbox → applies fix → tests",
+      "Agent sends to communication/{agent}_outbox.json",
+      "Debugger reads outbox → re-tests",
+      "If broken: loop to step 3 with more details",
+      "If fixed: notify affected agents via inbox.json"
+    ],
+    "inter_agent_dependencies": {
+      "video-specialist": ["ml-specialist"],
+      "tracker-dev-2": ["tracker-dev-1"],
+      "ui-enhancer": ["ui-architect"],
+      "test-engineer-2": ["test-engineer-1", "integration-master"],
+      "integration-master": ["video-specialist", "ml-specialist", "tracker-dev-1", "tracker-dev-2", "ui-architect", "cross-platform-dev"]
+    }
+  },
+  "performance_targets": {
+    "fps_1080p_rtx3090": 100,
+    "fps_8k_rtx3090": 60,
+    "vram_usage_gb_max": 20,
+    "test_coverage_percent": 80,
+    "pi_functional": true,
+    "zero_code_duplication": true
+  },
+  "technology_stack": {
+    "python_version": "3.11+",
+    "ml_frameworks": ["PyTorch 2.x", "TensorRT 10.x", "Ultralytics YOLO11"],
+    "video_processing": ["FFmpeg 7.x", "PyNvVideoCodec 2.0", "OpenCV"],
+    "tracking_algorithms": ["ByteTrack", "BoT-SORT", "Optical Flow", "Kalman Filter"],
+    "ui_frameworks": ["tkinter", "sv_ttk", "matplotlib"],
+    "testing": ["pytest", "pytest-cov", "pytest-mock"],
+    "code_quality": ["Black", "isort", "mypy", "pydocstyle"]
+  },
+  "file_structure": {
+    "/home/pi/elo_elo_320/": {
+      "core/": ["video_pipeline.py", "model_manager.py", "batch_processor.py", "config.py"],
+      "trackers/": ["base_tracker.py", "bytetrack.py", "botsort.py", "hybrid_tracker.py"],
+      "utils/": ["hardware.py", "metrics.py", "funscript.py", "logger.py"],
+      "ui/": ["main_window.py", "agent_dashboard.py", "settings_panel.py", "components/"],
+      "tests/": ["unit/", "integration/", "benchmarks/", "conftest.py"],
+      "docs/": ["architecture.md", "agent_assignments.json", "requirements.md"],
+      "progress/": ["project-architect.json", "video-specialist.json", "..."],
+      "communication/": ["{agent}_inbox.json", "{agent}_outbox.json"],
+      "output/": ["generated funscripts"]
+    }
+  },
+  "success_metrics": {
+    "architecture_document_complete": true,
+    "agent_assignments_detailed": true,
+    "all_agents_have_clear_tasks": true,
+    "dependencies_mapped": true,
+    "deliverables_specified": true,
+    "performance_targets_defined": true,
+    "communication_protocol_clear": true
+  }
+}

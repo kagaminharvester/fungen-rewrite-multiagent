@@ -1,0 +1,9 @@
+{
+  "start_time": "2025-10-24T19:45:00Z",
+  "total_duration_minutes": 30,
+  "status": "running",
+  "phase": "initialization",
+  "agents_active": 0,
+  "agents_completed": 0,
+  "overall_progress": 0
+}
