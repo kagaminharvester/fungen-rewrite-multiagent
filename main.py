@@ -144,6 +144,21 @@ For more information, see docs/README.md
         "--no-optical-flow", action="store_true", help="Disable optical flow refinement"
     )
 
+    # VR-to-2D optimization (NEW - 2x performance boost for VR videos)
+    parser.add_argument(
+        "--vr-to-2d",
+        action="store_true",
+        help="Convert VR video to 2D (extract single eye) for 2x speedup"
+    )
+
+    parser.add_argument(
+        "--vr-eye",
+        type=str,
+        choices=["left", "right"],
+        default="left",
+        help="Which eye to extract for VR-to-2D (default: left)"
+    )
+
     # Logging/debugging
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose logging")
 
@@ -167,7 +182,9 @@ def run_cli_mode(args: argparse.Namespace) -> int:
         from core.batch_processor import BatchProcessor, ProcessingSettings
         from core.config import Config
         from core.model_manager import ModelManager
-        from core.video_processor import VideoProcessor
+        # Use optimized video processor with VR-to-2D support
+        from core.video_processor_optimized import OptimizedVideoProcessor
+        from core.vr_utils import VREye
         from trackers import ByteTracker
         from trackers.improved_tracker import ImprovedTracker
 
@@ -245,15 +262,50 @@ def run_cli_mode(args: argparse.Namespace) -> int:
         tracker_class = ImprovedTracker if args.tracker == "improved" else ByteTracker
         logger.info(f"Using tracker: {args.tracker}")
 
+        # VR-to-2D settings
+        vr_to_2d = args.vr_to_2d
+        vr_eye = VREye.LEFT if args.vr_eye == "left" else VREye.RIGHT
+        if vr_to_2d:
+            logger.info(f"VR-to-2D optimization ENABLED (extracting {args.vr_eye} eye)")
+            logger.info("Expected performance: 2x speedup for VR videos")
+
         # Process each video
         for video_path in input_files:
             try:
                 logger.info(f"\nProcessing: {video_path.name}")
                 logger.info("-" * 60)
 
-                # Initialize video processor
-                processor = VideoProcessor(str(video_path), hw_accel=True)
+                # Initialize optimized video processor with VR-to-2D support
+                processor = OptimizedVideoProcessor(
+                    str(video_path),
+                    hw_accel=True,
+                    vr_to_2d=vr_to_2d,
+                    vr_eye=vr_eye
+                )
                 metadata = processor.get_metadata()
+
+                # Show VR optimization info
+                if vr_to_2d:
+                    perf_info = processor.get_performance_info()
+                    if perf_info["vr_format"] != "none":
+                        logger.info(f"VR Format detected: {perf_info['vr_format']}")
+                        logger.info(
+                            f"Original resolution: {perf_info['original_resolution'][0]}x"
+                            f"{perf_info['original_resolution'][1]}"
+                        )
+                        logger.info(
+                            f"Processing resolution: {perf_info['processed_resolution'][0]}x"
+                            f"{perf_info['processed_resolution'][1]}"
+                        )
+                        logger.info(
+                            f"Pixel reduction: {perf_info['pixel_reduction']*100:.1f}%"
+                        )
+                        logger.info(
+                            f"Estimated speedup: {perf_info['estimated_speedup']:.1f}x"
+                        )
+                    else:
+                        logger.info("Not a VR video - processing normally")
+
                 logger.info(f"Video: {metadata.width}x{metadata.height} @ {metadata.fps:.2f} FPS")
                 logger.info(
                     f"Duration: {metadata.duration_sec:.2f}s ({metadata.total_frames} frames)"
